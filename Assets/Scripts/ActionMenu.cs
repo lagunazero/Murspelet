@@ -15,7 +15,7 @@ public class ActionMenu : MonoBehaviour {
 	public Log log;
 	public List<Searchlight> searchlights;
 	public DialogueSystem dialogueSystem;
-	public Text text;
+	public GradualNight terrainScript;
 	
 	//End
 	public AnimationClip endAnimation;
@@ -88,12 +88,12 @@ public class ActionMenu : MonoBehaviour {
 		{
 			if(weapons[activeWeapon].ammoCurrent <= 0)
 			{
-				log.Push(string.Format(text.outOfAmmo, weapons[activeWeapon].type), Log.MessageType.feedback);
+				log.Push(string.Format(Text.outOfAmmo, weapons[activeWeapon].type), Log.MessageType.feedback);
 				audio.PlayOneShot(weapons[activeWeapon].sfxEmpty);
 			}
 			else if(aimVictim == null)
 			{
-				log.Push(text.aimingAtNone, Log.MessageType.feedback);
+				log.Push(Text.aimingAtNone, Log.MessageType.feedback);
 			}
 			else
 			{
@@ -102,7 +102,7 @@ public class ActionMenu : MonoBehaviour {
 				if(dmg > 0)
 					aimVictim.SendMessage("TakeDamage", dmg, SendMessageOptions.DontRequireReceiver);
 				else
-					log.Push(text.shotMissed, Log.MessageType.shoot);
+					log.Push(Text.shotMissed, Log.MessageType.shoot);
 				
 				EndTheTurn();
 			}
@@ -136,6 +136,7 @@ public class ActionMenu : MonoBehaviour {
 	{
 		victimSpawner.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		log.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+		terrainScript.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		for(int i = 0; i < searchlights.Count; i++)
 			searchlights[i].SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 	}
@@ -151,16 +152,16 @@ public class ActionMenu : MonoBehaviour {
 	
 	public void SlippedBy()
 	{
-		log.Push(text.slipBy, Log.MessageType.slip);
+		log.Push(Text.slipBy, Log.MessageType.slip);
 		slippedByCounter++;
 		if(slippedByCounter >= endSlipByAmount)
 			StartCoroutine(EndGame());
-		else if(text.slippedByRemarks.Length > slippedByCounter && text.slippedByRemarks[slippedByCounter] != "")
+		else if(Text.slippedByRemarks.Length > slippedByCounter && Text.slippedByRemarks[slippedByCounter] != "")
 		{
 			audio.PlayOneShot(sfxChatNoise);
-			log.Push(text.RandomChatNoise() + ' ' +
-				text.slippedByRemarks[slippedByCounter] + ' ' +
-				text.RandomChatNoise(),
+			log.Push(Text.RandomChatNoise() + ' ' +
+				Text.slippedByRemarks[slippedByCounter] + ' ' +
+				Text.RandomChatNoise(),
 				Log.MessageType.radio);
 		}
 	}
@@ -169,7 +170,7 @@ public class ActionMenu : MonoBehaviour {
 	{
 		isEnding = true;
 		canTakeAction = false;
-		log.Push(text.outroStart, Log.MessageType.special);
+		log.Push(Text.outroStart, Log.MessageType.special);
 		yield return new WaitForSeconds(endBeforeStartTime);
 		
 		//Turn towards the gun.
@@ -232,15 +233,15 @@ public class ActionMenu : MonoBehaviour {
 		}
 		
 		//HOLD FIRE
-		if(GUI.Button(holdFireRect, text.guiHoldFire, buttonStyle) && canTakeAction)
+		if(GUI.Button(holdFireRect, Text.guiHoldFire, buttonStyle) && canTakeAction)
 		{
-			log.Push(text.holdFire, Log.MessageType.feedback);
+			log.Push(Text.holdFire, Log.MessageType.feedback);
 			EndTheTurn();
 		}
 
 		//CHAT
 		/*
-		if(GUI.Button(chatRect, text.guiChatText, buttonStyle) && canTakeAction)
+		if(GUI.Button(chatRect, Text.guiChatText, buttonStyle) && canTakeAction)
 		{
 			isChatting = !isChatting;
 		}
@@ -255,13 +256,13 @@ public class ActionMenu : MonoBehaviour {
 		}
 		 */
 		
-		if(GUI.Button(chatRect, text.guiChat, buttonStyle) && canTakeAction)
+		if(GUI.Button(chatRect, Text.guiChat, buttonStyle) && canTakeAction)
 		{
 			audio.PlayOneShot(sfxChatNoise);
 			log.Push(
-				text.RandomChatNoise() + ' ' +
-				text.chatEntries[Random.Range(0, text.chatEntries.Length)] + ' ' +
-				text.RandomChatNoise(),
+				Text.RandomChatNoise() + ' ' +
+				Text.chatEntries[Random.Range(0, Text.chatEntries.Length)] + ' ' +
+				Text.RandomChatNoise(),
 				Log.MessageType.radio);
 			EndTheTurn();
 		}
@@ -272,7 +273,7 @@ public class ActionMenu : MonoBehaviour {
 		{
 			if(activeWeapon == i)
 			{
-				if(GUI.Button(weaponRect[i], text.guiReload + '\n'
+				if(GUI.Button(weaponRect[i], Text.guiReload + '\n'
 					+ weapons[i].type + '\n'
 					+ (weapons[i].ammoCurrent + " / " + weapons[i].ammoMax),
 					buttonStyle) && canTakeAction)
@@ -281,22 +282,22 @@ public class ActionMenu : MonoBehaviour {
 					{
 						weapons[i].ammoCurrent = weapons[i].ammoMax;
 						audio.PlayOneShot(weapons[activeWeapon].sfxReload);
-						log.Push(string.Format(text.reload, weapons[i].type), Log.MessageType.feedback);
+						log.Push(string.Format(Text.reload, weapons[i].type), Log.MessageType.feedback);
 						EndTheTurn();
 					}
 					else
-						log.Push(string.Format(text.reloadFullyLoaded, weapons[i].type), Log.MessageType.feedback);
+						log.Push(string.Format(Text.reloadFullyLoaded, weapons[i].type), Log.MessageType.feedback);
 				}
 			}
 			else
 			{
-				if(GUI.Button(weaponRect[i], text.guiSwitchWeapon + '\n'
+				if(GUI.Button(weaponRect[i], Text.guiSwitchWeapon + '\n'
 					+ weapons[i].type + '\n'
 					+ (weapons[i].ammoCurrent + " / " + weapons[i].ammoMax),
 					buttonStyle) && canTakeAction)
 				{
 					activeWeapon = i;
-					log.Push(string.Format(text.switchWeapon, weapons[i].type), Log.MessageType.feedback);
+					log.Push(string.Format(Text.switchWeapon, weapons[i].type), Log.MessageType.feedback);
 					EndTheTurn();
 				}		
 			}

@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\ActionMenu.cs" />
      <Compile Include="Assets\Scripts\DialogueSystem.cs" />
      <Compile Include="Assets\Scripts\DialogueTree.cs" />
+     <Compile Include="Assets\Scripts\GradualNight.cs" />
      <Compile Include="Assets\Scripts\Health.cs" />
      <Compile Include="Assets\Scripts\Log.cs" />
      <Compile Include="Assets\Scripts\LogMessage.cs" />

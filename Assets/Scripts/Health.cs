@@ -14,7 +14,6 @@ public class Health : MonoBehaviour {
 	
 	private static ActionMenu actionMenu;
 	private static Log log;
-	private static Text text;
 	
 	// Use this for initialization
 	void Start ()
@@ -25,7 +24,6 @@ public class Health : MonoBehaviour {
 		{
 			actionMenu = GameObject.Find("Main Camera").GetComponent<ActionMenu>();
 			log = GameObject.Find("HUD").GetComponent<Log>();
-			text = GameObject.Find("HUD").GetComponent<Text>();
 		}
 	}
 	
@@ -33,24 +31,24 @@ public class Health : MonoBehaviour {
 	{
 		if(!isAlive)
 		{
-			log.Push(string.Format(text.shootDead, info.gender), Log.MessageType.shoot);
+			log.Push(string.Format(Text.shootDead, info.gender), Log.MessageType.shoot);
 			return;
 		}
 		
 		currentHealth -= damage;
 		if(currentHealth <= 0)
 		{
-			log.Push(text.hitKilled, Log.MessageType.shoot);
+			log.Push(Text.hitKilled, Log.MessageType.shoot);
 			StartCoroutine(Die());
 		}
 		else if(currentHealth <= maxHealth * 0.2f)
-			log.Push(text.hitWounded4, Log.MessageType.shoot);
+			log.Push(Text.hitWounded4, Log.MessageType.shoot);
 		else if(currentHealth <= maxHealth * 0.5f)
-			log.Push(text.hitWounded3, Log.MessageType.shoot);
+			log.Push(Text.hitWounded3, Log.MessageType.shoot);
 		else if(currentHealth <= maxHealth * 0.8f)
-			log.Push(text.hitWounded2, Log.MessageType.shoot);
+			log.Push(Text.hitWounded2, Log.MessageType.shoot);
 		else
-			log.Push(text.hitWounded1, Log.MessageType.shoot);
+			log.Push(Text.hitWounded1, Log.MessageType.shoot);
 	}
 	
 	public IEnumerator Die()

@@ -16,7 +16,6 @@ public class Log : MonoBehaviour {
 	private List<LogMessage> log = new List<LogMessage>();
 	private int turnCounter = 1;
 	
-	public Text text;
 	public GUIText[] guiTexts;
 	public Color[] messageTypeColors;
 	public FontStyle[] messageTypeFontStyles;
@@ -30,7 +29,7 @@ public class Log : MonoBehaviour {
 		{
 			guiTexts[i].text = "";
 		}
-		Push(text.intro, Log.MessageType.special);
+		Push(Text.intro, Log.MessageType.special);
 	}
 	
 	public void Push(string msg, MessageType type)
