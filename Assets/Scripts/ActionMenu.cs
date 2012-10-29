@@ -3,10 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ActionMenu : MonoBehaviour {
-
+	
 	public int initTurns = 0;
+	public int tranquilitySlipByAmount = 8;
 	public int endSlipByAmount = 10;
 	public int framesPerTurn = 60;
+	public int radioContact1Turn = 2;
+	public int radioContact2Turn = 4;
+	public int radioContact3Turn = 6;
+	public int radioContact4Turn = 8;
 
 	//Object refs
 	public GameObject victimSpawner;
@@ -16,12 +21,16 @@ public class ActionMenu : MonoBehaviour {
 	public List<Searchlight> searchlights;
 	public DialogueSystem dialogueSystem;
 	public GradualNight terrainScript;
+	public Soundscape soundscape;
+	
+	//Intro
+	public float introFadeTime = 1;
 	
 	//End
 	public AnimationClip endAnimation;
 	public float endBeforeStartTime;
 	public float endBeforeTextTime;
-	public float endTextFadeTime;
+	public float endTextFadeTime = 1;
 
 	//Text
 	public AudioClip sfxChatNoise;
@@ -48,6 +57,9 @@ public class ActionMenu : MonoBehaviour {
 	private bool isEnding = false;
 	private bool isAiming = false;
 	private int slippedByCounter = 0;
+	private int slippedByCounterThisTurn = 0;
+	[HideInInspector]
+	public int killCounter = 0;
 	private bool canTakeAction = true;
 	public int activeWeapon;
 	private bool isChatting = false;
@@ -75,8 +87,10 @@ public class ActionMenu : MonoBehaviour {
 			weaponRect.Add(new Rect(width * (5 + i),
 				buttonBorderOffset, width, height));
 		
-		for(int i = 0; i < initTurns; i++)
-			EndTheTurn();
+//		for(int i = 0; i < initTurns; i++)
+//			EndTheTurn();
+		
+		StartCoroutine(StartGame());
 	}
 	
 	void Update()
@@ -84,7 +98,7 @@ public class ActionMenu : MonoBehaviour {
 		if(!canTakeAction) return;
 		isAiming = Input.mousePosition.y < Screen.height * 0.75f;
 		
-		if(Input.GetMouseButtonDown(0) && isAiming)
+		if(Input.GetButtonDown("Action") && isAiming)
 		{
 			if(weapons[activeWeapon].ammoCurrent <= 0)
 			{
@@ -113,6 +127,15 @@ public class ActionMenu : MonoBehaviour {
 	public void EndTheTurn()
 	{
 		isAiming = false;
+		if(log.turnCounter == radioContact1Turn)
+			log.PushRadio(Text.radioContact1);
+		else if(log.turnCounter == radioContact2Turn)
+			log.PushRadio(Text.radioContact2);
+		else if(log.turnCounter == radioContact3Turn)
+			log.PushRadio(Text.radioContact3);
+		else if(log.turnCounter == radioContact4Turn)
+			log.PushRadio(Text.radioContact4);
+		
 		SendMessageToAI("EndTurn");
 		StartCoroutine(WaitingTime());
 	}
@@ -127,9 +150,41 @@ public class ActionMenu : MonoBehaviour {
 			counter++;
 			yield return new WaitForEndOfFrame();
 		}
-		if(!isEnding)
-			canTakeAction = true;
 		SendMessageToAI("StartTurn");
+		
+		if(!isEnding)
+		{
+			canTakeAction = true;
+			
+			//Do some stuff if anyone slipped by.
+			if(slippedByCounterThisTurn > 0)
+			{
+				//Tell if anyone slipped by.
+				log.Push(string.Format(Text.slipBy, Text.IntToText(slippedByCounterThisTurn)),
+					Log.MessageType.slip);
+				slippedByCounter += slippedByCounterThisTurn;
+				slippedByCounterThisTurn = 0;
+				
+				//Are we at the end?
+				if(slippedByCounter >= endSlipByAmount)
+					StartCoroutine(EndGame());
+				else
+				{
+					//Make a remark on the radio.
+					if(Text.slippedByRemarks.Length > slippedByCounter && Text.slippedByRemarks[slippedByCounter] != "")
+					{
+						audio.PlayOneShot(sfxChatNoise);
+						log.PushRadio(Text.slippedByRemarks[slippedByCounter]);
+					}
+					
+					//Have we passed the point for final tranquility?
+					if(slippedByCounter > tranquilitySlipByAmount)
+					{
+						SendMessageToAI("Tranquility");
+					}
+				}
+			}
+		}
 	}
 	
 	public void SendMessageToAI(string msg)
@@ -137,6 +192,7 @@ public class ActionMenu : MonoBehaviour {
 		victimSpawner.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		log.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		terrainScript.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+		soundscape.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		for(int i = 0; i < searchlights.Count; i++)
 			searchlights[i].SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 	}
@@ -152,18 +208,38 @@ public class ActionMenu : MonoBehaviour {
 	
 	public void SlippedBy()
 	{
-		log.Push(Text.slipBy, Log.MessageType.slip);
-		slippedByCounter++;
-		if(slippedByCounter >= endSlipByAmount)
-			StartCoroutine(EndGame());
-		else if(Text.slippedByRemarks.Length > slippedByCounter && Text.slippedByRemarks[slippedByCounter] != "")
+		slippedByCounterThisTurn++;
+	}
+	
+	public IEnumerator StartGame()
+	{
+		canTakeAction = false;
+		
+		//Prepare explanation text.
+		GUIText t = GameObject.Find("Special text").guiText;
+		t.text = Text.introExplanation;
+		t.material.color = new Color(1,1,1,1);
+		t.enabled = true;
+		
+		//Wait for mouse button down
+		while(!Input.GetButton("Action"))
 		{
-			audio.PlayOneShot(sfxChatNoise);
-			log.Push(Text.RandomChatNoise() + ' ' +
-				Text.slippedByRemarks[slippedByCounter] + ' ' +
-				Text.RandomChatNoise(),
-				Log.MessageType.radio);
+			yield return new WaitForEndOfFrame();
 		}
+		
+		//Fade out text and fade in game
+		float fadeSpeed = 1 / introFadeTime;
+		ScreenOverlay overlay = gameObject.GetComponent<ScreenOverlay>();
+		while(t.material.color.a > 0 || overlay.intensity > 0)
+		{
+			overlay.intensity = Mathf.Max(0, overlay.intensity - fadeSpeed * Time.deltaTime);
+			t.material.color = new Color(1,1,1, Mathf.Max(0, t.material.color.a - fadeSpeed * Time.deltaTime));
+			yield return new WaitForEndOfFrame();
+		}
+		
+		//Done. Let's play!
+		t.enabled = false;
+		canTakeAction = true;
 	}
 	
 	public IEnumerator EndGame()
@@ -171,7 +247,7 @@ public class ActionMenu : MonoBehaviour {
 		isEnding = true;
 		canTakeAction = false;
 		log.Push(Text.outroStart, Log.MessageType.special);
-		yield return new WaitForSeconds(endBeforeStartTime);
+		//yield return new WaitForSeconds(endBeforeStartTime);
 		
 		//Turn towards the gun.
 		animation.clip = endAnimation;
@@ -179,13 +255,14 @@ public class ActionMenu : MonoBehaviour {
 		yield return new WaitForSeconds(endAnimation.length + endBeforeTextTime);
 
 		//Show the ending text
-		GUIText t = GameObject.Find("Ending text").guiText;
+		GUIText t = GameObject.Find("Special text").guiText;
+		t.text = string.Format(Text.outroEnd, killCounter);
 		t.material.color = new Color(1,1,1,0);
 		t.enabled = true;
-		float fadeSpeed = 1 / (endTextFadeTime * Time.fixedTime);
+		float fadeSpeed = 1 / endTextFadeTime;
 		while(t.material.color.a < 1)
 		{
-			t.material.color = new Color(1,1,1,t.material.color.a + fadeSpeed);
+			t.material.color = new Color(1,1,1,t.material.color.a + fadeSpeed * Time.deltaTime);
 			yield return new WaitForEndOfFrame();
 		}
 		//Now it's all over...
@@ -258,12 +335,25 @@ public class ActionMenu : MonoBehaviour {
 		
 		if(GUI.Button(chatRect, Text.guiChat, buttonStyle) && canTakeAction)
 		{
+			/*
 			audio.PlayOneShot(sfxChatNoise);
 			log.Push(
 				Text.RandomChatNoise() + ' ' +
 				Text.chatEntries[Random.Range(0, Text.chatEntries.Length)] + ' ' +
 				Text.RandomChatNoise(),
 				Log.MessageType.radio);
+			*/
+			if(slippedByCounter < tranquilitySlipByAmount)
+			{
+				if(soundscape.sourceRocking.isPlaying)
+					soundscape.StopRocking();
+				else
+					soundscape.PlayRocking();
+			}
+			else
+			{
+				log.Push(Text.radioNoSignal, Log.MessageType.feedback);
+			}
 			EndTheTurn();
 		}
 		

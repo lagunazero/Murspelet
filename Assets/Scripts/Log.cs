@@ -14,7 +14,8 @@ public class Log : MonoBehaviour {
 	}
 
 	private List<LogMessage> log = new List<LogMessage>();
-	private int turnCounter = 1;
+	[HideInInspector]
+	public int turnCounter = 0;
 	
 	public GUIText[] guiTexts;
 	public Color[] messageTypeColors;
@@ -29,7 +30,8 @@ public class Log : MonoBehaviour {
 		{
 			guiTexts[i].text = "";
 		}
-		Push(Text.intro, Log.MessageType.special);
+		Push(Text.introGameStart, Log.MessageType.special);
+		turnCounter = 1;
 	}
 	
 	public void Push(string msg, MessageType type)
@@ -43,6 +45,11 @@ public class Log : MonoBehaviour {
 			Color c = messageTypeColors[(int)lm.type];
 			guiTexts[i].material.color = new Color(c.r, c.g, c.b, 1f - (i / (float)guiTexts.Length));
 		}
+	}
+	
+	public void PushRadio(string msg)
+	{
+		Push(Text.RandomChatNoise() + ' ' + msg + ' ' + Text.RandomChatNoise(), MessageType.radio);
 	}
 	
 	public string StringNumber(int n, int length)

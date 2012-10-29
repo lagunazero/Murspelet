@@ -39,6 +39,8 @@ public class Health : MonoBehaviour {
 		if(currentHealth <= 0)
 		{
 			log.Push(Text.hitKilled, Log.MessageType.shoot);
+			audio.Play();
+			actionMenu.killCounter++;
 			StartCoroutine(Die());
 		}
 		else if(currentHealth <= maxHealth * 0.2f)
