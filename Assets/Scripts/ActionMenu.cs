@@ -37,8 +37,9 @@ public class ActionMenu : MonoBehaviour {
 
 	//UI graphics
 	public float aimBorder = 400;
-	public Texture2D aimSymbol;
-	public Vector2 aimSymbolSize;
+	public Texture2D mouseNormalIcon;
+	public Texture2D mouseAimIcon;
+	public Vector2 mouseIconSize;
 	public Vector2 aimAccuracySize;
 	public Vector2 aimAccuracyOffset;
 	public float buttonBorderOffset;	
@@ -218,28 +219,37 @@ public class ActionMenu : MonoBehaviour {
 		//Prepare explanation text.
 		GUIText t = GameObject.Find("Special text").guiText;
 		t.text = Text.introExplanation;
-		t.material.color = new Color(1,1,1,1);
+		t.material.color = new Color(t.material.color.r, t.material.color.g, t.material.color.b, 1);
 		t.enabled = true;
 		
+		ScreenOverlay overlay = gameObject.GetComponent<ScreenOverlay>();
+		overlay.intensity = -1;
+
+		guiColor = new Color(guiColor.r, guiColor.g, guiColor.b, 0);
+
 		//Wait for mouse button down
 		while(!Input.GetButton("Action"))
 		{
 			yield return new WaitForEndOfFrame();
 		}
 		
+		Screen.showCursor = false;
+		
 		//Fade out text and fade in game
 		float fadeSpeed = 1 / introFadeTime;
-		ScreenOverlay overlay = gameObject.GetComponent<ScreenOverlay>();
-		while(t.material.color.a > 0 || overlay.intensity > 0)
+		while(t.material.color.a > 0 || overlay.intensity < 0 || guiColor.a < 1)
 		{
-			overlay.intensity = Mathf.Max(0, overlay.intensity - fadeSpeed * Time.deltaTime);
-			t.material.color = new Color(1,1,1, Mathf.Max(0, t.material.color.a - fadeSpeed * Time.deltaTime));
+			t.material.color = new Color(t.material.color.r, t.material.color.g, t.material.color.b, Mathf.Max(0, t.material.color.a - fadeSpeed * Time.deltaTime));
+			overlay.intensity = Mathf.Min(0, overlay.intensity + fadeSpeed * Time.deltaTime);
+			guiColor = new Color(guiColor.r, guiColor.g, guiColor.b, Mathf.Min(1, guiColor.a + fadeSpeed * Time.deltaTime));
 			yield return new WaitForEndOfFrame();
 		}
 		
 		//Done. Let's play!
 		t.enabled = false;
 		canTakeAction = true;
+		
+		SendMessageToAI("GameStarted");
 	}
 	
 	public IEnumerator EndGame()
@@ -297,9 +307,7 @@ public class ActionMenu : MonoBehaviour {
 		//AIM
 		if(isAiming && canTakeAction)
 		{
-			GUI.DrawTexture(new Rect(Input.mousePosition.x,
-				Screen.height - Input.mousePosition.y, aimSymbolSize.x,
-				aimSymbolSize.y), aimSymbol);		
+			OnGUI_Mouse(mouseAimIcon);
 			if(aimVictim != null)
 			{
 				GUI.TextField(new Rect(Input.mousePosition.x + aimAccuracyOffset.x,
@@ -307,6 +315,10 @@ public class ActionMenu : MonoBehaviour {
 					aimAccuracySize.x, aimAccuracySize.y),
 					FindAccuracy() + "%");
 			}
+		}
+		else
+		{
+			OnGUI_Mouse(mouseNormalIcon);
 		}
 		
 		//HOLD FIRE
@@ -392,5 +404,13 @@ public class ActionMenu : MonoBehaviour {
 				}		
 			}
 		}
+	}
+
+	void OnGUI_Mouse(Texture2D tex)
+	{
+		GUI.DrawTexture(new Rect(Input.mousePosition.x - mouseIconSize.x / 2,
+			Screen.height - Input.mousePosition.y - mouseIconSize.y / 2,
+			mouseIconSize.x, mouseIconSize.y),
+			tex, ScaleMode.ScaleToFit);
 	}
 }

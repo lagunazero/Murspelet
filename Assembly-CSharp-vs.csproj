@@ -57,6 +57,7 @@
      <Compile Include="Assets\Scripts\LogMessage.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
      <Compile Include="Assets\Scripts\Searchlight.cs" />
+     <Compile Include="Assets\Scripts\Soundscape.cs" />
      <Compile Include="Assets\Scripts\Spawn.cs" />
      <Compile Include="Assets\Scripts\Text.cs" />
      <Compile Include="Assets\Scripts\VictimInfo.cs" />

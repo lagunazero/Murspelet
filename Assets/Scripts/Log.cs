@@ -30,8 +30,6 @@ public class Log : MonoBehaviour {
 		{
 			guiTexts[i].text = "";
 		}
-		Push(Text.introGameStart, Log.MessageType.special);
-		turnCounter = 1;
 	}
 	
 	public void Push(string msg, MessageType type)
@@ -62,5 +60,11 @@ public class Log : MonoBehaviour {
 	public void EndTurn()
 	{
 		turnCounter++;
+	}
+	
+	public void GameStarted()
+	{
+		Push(Text.introGameStart, Log.MessageType.special);
+		turnCounter = 1;
 	}
 }
