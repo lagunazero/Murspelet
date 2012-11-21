@@ -29,28 +29,38 @@ public class Health : MonoBehaviour {
 	
 	public void TakeDamage(int damage)
 	{
-		if(!isAlive)
+		if(damage > 0)
 		{
-			log.Push(string.Format(Text.shootDead, info.gender), Log.MessageType.shoot);
-			return;
+			if(!isAlive)
+			{
+				log.Push(string.Format(Text.shootDead, info.gender), Log.MessageType.shoot);
+				return;
+			}
+			
+			currentHealth -= damage;
+			if(currentHealth <= 0)
+			{
+				log.Push(Text.hitKilled, Log.MessageType.shoot);
+				audio.Play();
+				actionMenu.killCounter++;
+				actionMenu.GetComponent<RadioFeedback>().KillFeedback();
+				StartCoroutine(Die());
+			}
+			else if(currentHealth <= maxHealth * 0.2f)
+				log.Push(Text.hitWounded4, Log.MessageType.shoot);
+			else if(currentHealth <= maxHealth * 0.5f)
+				log.Push(Text.hitWounded3, Log.MessageType.shoot);
+			else if(currentHealth <= maxHealth * 0.8f)
+				log.Push(Text.hitWounded2, Log.MessageType.shoot);
+			else
+				log.Push(Text.hitWounded1, Log.MessageType.shoot);
 		}
 		
-		currentHealth -= damage;
-		if(currentHealth <= 0)
+		//If the victim is still alive, are we brave enough to continue?
+		if(isAlive && info.bravery < Random.Range(0f,1f))
 		{
-			log.Push(Text.hitKilled, Log.MessageType.shoot);
-			audio.Play();
-			actionMenu.killCounter++;
-			StartCoroutine(Die());
+			GetComponent<Movement>().Flee();
 		}
-		else if(currentHealth <= maxHealth * 0.2f)
-			log.Push(Text.hitWounded4, Log.MessageType.shoot);
-		else if(currentHealth <= maxHealth * 0.5f)
-			log.Push(Text.hitWounded3, Log.MessageType.shoot);
-		else if(currentHealth <= maxHealth * 0.8f)
-			log.Push(Text.hitWounded2, Log.MessageType.shoot);
-		else
-			log.Push(Text.hitWounded1, Log.MessageType.shoot);
 	}
 	
 	public IEnumerator Die()

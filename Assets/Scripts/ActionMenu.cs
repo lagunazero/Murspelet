@@ -8,10 +8,6 @@ public class ActionMenu : MonoBehaviour {
 	public int tranquilitySlipByAmount = 8;
 	public int endSlipByAmount = 10;
 	public int framesPerTurn = 60;
-	public int radioContact1Turn = 2;
-	public int radioContact2Turn = 4;
-	public int radioContact3Turn = 6;
-	public int radioContact4Turn = 8;
 
 	//Object refs
 	public GameObject victimSpawner;
@@ -52,7 +48,7 @@ public class ActionMenu : MonoBehaviour {
 	private Rect holdFireRect;
 	private List<Rect> weaponRect;
 	public Color guiColor;
-	private List<Rect> chatRectOptions;
+	//private List<Rect> chatRectOptions;
 	
 	//States and counters
 	private bool isEnding = false;
@@ -63,7 +59,6 @@ public class ActionMenu : MonoBehaviour {
 	public int killCounter = 0;
 	private bool canTakeAction = true;
 	public int activeWeapon;
-	private bool isChatting = false;
 
 	// Use this for initialization
 	void Start ()
@@ -74,7 +69,8 @@ public class ActionMenu : MonoBehaviour {
 			buttonBorderOffset, width, height);
 		chatRect = new Rect(width * 3,
 			buttonBorderOffset, width, height);
-		
+
+		/*
 		chatRectOptions = new List<Rect>();
 		for(int i = 0; i < 3; i++)
 		{
@@ -82,6 +78,7 @@ public class ActionMenu : MonoBehaviour {
 				buttonBorderOffset + height * (1 + i),
 				width, height));
 		}
+		*/
 		
 		weaponRect = new List<Rect>(weapons.Count);
 		for(int i = 0; i < weapons.Count; i++)
@@ -114,9 +111,8 @@ public class ActionMenu : MonoBehaviour {
 			{
 				audio.PlayOneShot(weapons[activeWeapon].sfxShoot);
 				int dmg = weapons[activeWeapon].Shoot(FindAccuracy());
-				if(dmg > 0)
-					aimVictim.SendMessage("TakeDamage", dmg, SendMessageOptions.DontRequireReceiver);
-				else
+				aimVictim.SendMessage("TakeDamage", dmg, SendMessageOptions.DontRequireReceiver);
+				if(dmg <= 0)
 					log.Push(Text.shotMissed, Log.MessageType.shoot);
 				
 				EndTheTurn();
@@ -128,15 +124,6 @@ public class ActionMenu : MonoBehaviour {
 	public void EndTheTurn()
 	{
 		isAiming = false;
-		if(log.turnCounter == radioContact1Turn)
-			log.PushRadio(Text.radioContact1);
-		else if(log.turnCounter == radioContact2Turn)
-			log.PushRadio(Text.radioContact2);
-		else if(log.turnCounter == radioContact3Turn)
-			log.PushRadio(Text.radioContact3);
-		else if(log.turnCounter == radioContact4Turn)
-			log.PushRadio(Text.radioContact4);
-		
 		SendMessageToAI("EndTurn");
 		StartCoroutine(WaitingTime());
 	}
@@ -145,7 +132,7 @@ public class ActionMenu : MonoBehaviour {
 	{
 		int counter = 0;
 		canTakeAction = false;
-		isChatting = false;
+		//isChatting = false;
 		while(counter < framesPerTurn)
 		{
 			counter++;
@@ -190,10 +177,11 @@ public class ActionMenu : MonoBehaviour {
 	
 	public void SendMessageToAI(string msg)
 	{
+		SendMessage(msg, SendMessageOptions.DontRequireReceiver);
+		
 		victimSpawner.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		log.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		terrainScript.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
-		soundscape.SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 		for(int i = 0; i < searchlights.Count; i++)
 			searchlights[i].SendMessage(msg, SendMessageOptions.DontRequireReceiver);
 	}
@@ -233,7 +221,11 @@ public class ActionMenu : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		
-		Screen.showCursor = false;
+		if(!Debug.isDebugBuild)
+			Screen.showCursor = false;
+
+		//Fade in ambient track
+		soundscape.StartGame();
 		
 		//Fade out text and fade in game
 		float fadeSpeed = 1 / introFadeTime;
@@ -345,7 +337,7 @@ public class ActionMenu : MonoBehaviour {
 		}
 		 */
 		
-		if(GUI.Button(chatRect, Text.guiChat, buttonStyle) && canTakeAction)
+		if(GUI.Button(chatRect,soundscape.sourceRocking.isPlaying ? Text.guiRadioOff : Text.guiRadioOn, buttonStyle) && canTakeAction)
 		{
 			/*
 			audio.PlayOneShot(sfxChatNoise);

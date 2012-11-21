@@ -32,7 +32,8 @@ public class GradualNight : MonoBehaviour {
 		while(animState.speed != 0)
 		{
 			RenderSettings.fogColor = fogColor;
-			RenderSettings.ambientLight = ambientLight;
+			//Looks good out on the field, but the ending looks bad
+			//RenderSettings.ambientLight = ambientLight;
 			yield return new WaitForEndOfFrame();
 		}
 	}

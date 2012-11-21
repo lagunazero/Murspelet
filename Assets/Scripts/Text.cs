@@ -22,7 +22,7 @@ public static class Text {
 
 	//Radio
 	public static string radioContact1 = "Welcome to the wall, soldier!";
-	public static string radioContact2 = "Better get acquinted to it.";
+	public static string radioContact2 = "Better get acquainted with it.";
 	public static string radioContact3 = "Just aim to kill. They'd rather be dead too!";
 	public static string radioContact4 = "Don't worry too much, you're not alone up here.";
 	public static string radioKillFeedback1 = "Good shot!";
@@ -56,6 +56,8 @@ public static class Text {
 	public static string guiReload = "Reload";
 	public static string guiChat = "Radio";
 	public static string guiHoldFire = "Hold fire";
+	public static string guiRadioOn = "Turn radio on";
+	public static string guiRadioOff = "Turn radio off";
 	
 	//Radio
 	public static string[] chatNoise = {"*bzzt*", "*zzrpk*", "*bzzzkrz*"};
@@ -67,7 +69,7 @@ public static class Text {
 		"Man, this helmet itches."
 	};
 	public static string[] slippedByRemarks = {
-		"",
+		"", //Leave empty, since we start at index 0
 		"Whoa, you missed one!",
 		"Be careful, you missed another one.",
 		"You forgot to reload or something?",

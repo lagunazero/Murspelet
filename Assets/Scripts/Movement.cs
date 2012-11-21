@@ -6,8 +6,11 @@ public class Movement : MonoBehaviour {
 	public float distanceAverage;
 	public float distanceRandomDistribution;
 	public Health health;
+	public VictimInfo info;
+	public Vector3 goalPoint;
+	public float goalDistanceRequirement = 5;
+	public int fleeGoalMinX, fleeGoalMaxX, fleeGoalMinZ, fleeGoalMaxZ;
 	
-	public static Vector3 goalPoint;
 	public static Log log;
 	public static ActionMenu actionMenu;
 	
@@ -20,16 +23,20 @@ public class Movement : MonoBehaviour {
 			GameObject c = GameObject.Find("Main Camera");
 			log = c.GetComponentInChildren<Log>();
 			actionMenu = c.GetComponent<ActionMenu>();
-			goalPoint = c.transform.position;
-			goalPoint.y = transform.position.y;
 		}
+//		goalPoint = actionMenu.transform.position;
+//		goalPoint.y = transform.position.y;
+	}
+	
+	public void OnDrawGizmos()
+	{
+		Gizmos.DrawLine(transform.position, transform.position + transform.forward * 50);
 	}
 	
 	public void EndTurn()
 	{
 		//Ensure we're still looking at the right spot.
 		transform.LookAt(goalPoint);
-		transform.eulerAngles = new Vector3(270, transform.eulerAngles.y - 180, 0);
 		isMoving = true;
 		StopAllCoroutines();
 		StartCoroutine(Walk());
@@ -49,20 +56,26 @@ public class Movement : MonoBehaviour {
 		Vector3 step = transform.forward * vel / actionMenu.framesPerTurn;
 		while(isMoving)
 		{
-			transform.Translate(step);
-			if(transform.position.z < goalPoint.z)
+			if(Vector3.Distance(transform.position, goalPoint) < goalDistanceRequirement)
 			{
-				Arrived();
 				isMoving = false;
+				if(!info.isFleeing)
+					actionMenu.SlippedBy();
+				Destroy(gameObject);
 				return false;
 			}
-			yield return new WaitForEndOfFrame();
+			else
+			{
+				transform.Translate(step, Space.World);
+				yield return new WaitForEndOfFrame();
+			}
 		}
 	}
 	
-	public void Arrived()
+	public void Flee()
 	{
-		actionMenu.SlippedBy();
-		Destroy(gameObject);
+		info.isFleeing = true;
+		goalPoint.x = Random.Range(fleeGoalMinX, fleeGoalMaxX);
+		goalPoint.z = Random.Range(fleeGoalMinZ, fleeGoalMaxZ);
 	}
 }
