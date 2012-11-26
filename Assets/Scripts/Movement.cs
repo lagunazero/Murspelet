@@ -5,6 +5,7 @@ public class Movement : MonoBehaviour {
 
 	public float distanceAverage;
 	public float distanceRandomDistribution;
+	public float directionRandomDistribution;
 	public Health health;
 	public VictimInfo info;
 	public Vector3 goalPoint;
@@ -28,11 +29,6 @@ public class Movement : MonoBehaviour {
 //		goalPoint.y = transform.position.y;
 	}
 	
-	public void OnDrawGizmos()
-	{
-		Gizmos.DrawLine(transform.position, transform.position + transform.forward * 50);
-	}
-	
 	public void EndTurn()
 	{
 		//Ensure we're still looking at the right spot.
@@ -49,11 +45,17 @@ public class Movement : MonoBehaviour {
 	
 	public IEnumerator Walk()
 	{
+		//Get the velocity we want to proceed with.
 		float vel = distanceAverage + Random.Range(-distanceRandomDistribution, distanceRandomDistribution);
 		//Walk slower when wounded.
 		vel *= health.currentHealth / health.maxHealth;
+		//Get the direction we want to go.
+		Vector3 step = transform.forward;
+		//Add some random distribution to make it less robotic.
+		step.x += Random.Range(- directionRandomDistribution,  directionRandomDistribution);
+		step.z += Random.Range(- directionRandomDistribution,  directionRandomDistribution);
 		//Divide by number of frames, since we want a distance/turn.
-		Vector3 step = transform.forward * vel / actionMenu.framesPerTurn;
+		step *= vel / actionMenu.framesPerTurn;
 		while(isMoving)
 		{
 			if(Vector3.Distance(transform.position, goalPoint) < goalDistanceRequirement)

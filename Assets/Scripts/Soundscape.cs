@@ -17,6 +17,8 @@ public class Soundscape : MonoBehaviour {
 	private float idealVolumeTranquil;
 	private float idealVolumeRocking;
 	
+	public AudioClip sfxRadioOn, sfxRadioOff;
+	
 	public void Start()
 	{
 		idealVolumeAmbience = sourceAmbience.volume;
@@ -68,6 +70,7 @@ public class Soundscape : MonoBehaviour {
 
 	public void PlayRocking()
 	{
+		audio.PlayOneShot(sfxRadioOn);
 		sourceRocking.Play();
 		StartCoroutine(FadeOut(sourceAmbience));
 		log.Push(Text.radioRockOn, Log.MessageType.feedback);
@@ -75,6 +78,7 @@ public class Soundscape : MonoBehaviour {
 	
 	public void StopRocking()
 	{
+		audio.PlayOneShot(sfxRadioOff);
 		sourceRocking.Stop();
 		StartCoroutine(FadeIn(sourceAmbience));
 		log.Push(Text.radioRockOff, Log.MessageType.feedback);

@@ -7,8 +7,6 @@ Project("{9D46AAA9-DDD8-9BB4-5276-189ED6C40065}") = "Murspelet", "Assembly-CShar
 EndProject
 Project("{9D46AAA9-DDD8-9BB4-5276-189ED6C40065}") = "Murspelet", "Assembly-UnityScript-firstpass.unityproj", "{F45DBBEE-98C5-CA91-9514-EEDCBAB4DF4D}"
 EndProject
-Project("{9D46AAA9-DDD8-9BB4-5276-189ED6C40065}") = "Murspelet", "Assembly-UnityScript.unityproj", "{66467E0B-6F54-782E-C64F-5414A2C0F2C0}"
-EndProject
 Project("{9D46AAA9-DDD8-9BB4-5276-189ED6C40065}") = "Murspelet", "Assembly-UnityScript-Editor-firstpass.unityproj", "{5A0874C4-C3E1-5F7C-8270-1164F78892A1}"
 EndProject
 Global
@@ -29,10 +27,6 @@ Global
 		{F45DBBEE-98C5-CA91-9514-EEDCBAB4DF4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F45DBBEE-98C5-CA91-9514-EEDCBAB4DF4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F45DBBEE-98C5-CA91-9514-EEDCBAB4DF4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66467E0B-6F54-782E-C64F-5414A2C0F2C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66467E0B-6F54-782E-C64F-5414A2C0F2C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66467E0B-6F54-782E-C64F-5414A2C0F2C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66467E0B-6F54-782E-C64F-5414A2C0F2C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A0874C4-C3E1-5F7C-8270-1164F78892A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A0874C4-C3E1-5F7C-8270-1164F78892A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A0874C4-C3E1-5F7C-8270-1164F78892A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,7 +35,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																														GlobalSection(MonoDevelopProperties) = preSolution
+																																																				GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

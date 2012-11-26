@@ -10,10 +10,12 @@ public static class Text {
 		"Left mouse button shoots or performs an action.\n" +
 		"Press left mouse button to begin.\n" +
 		"END OF BRIEFING";
-	public static string outroEnd = "A game about considering your actions, by Ulf Hartelius.\n" +
-									"Sound by Alexander Zurowetz.\n" +
-									"Graphics by ????.\n\n" +
-									"You shot and killed {0} unarmed civilians.";
+	public static string outroEnd = "You shot and killed {0} unarmed civilians.\n\n" +
+									"A game about considering your actions, by Ulf Hartelius\n" +
+									"Sound by Alexander Zurowetz\n" +
+									"Graphics from Unity Asset Store:\n" +
+									"  Gun by Zodiac Alliance Digital Entertainment,\n" +
+									"  Textures by Allegorithmic and Ninety Nine Works";
 	
 	//Events
 	public static string introGameStart = "The watch begins...";
