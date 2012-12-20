@@ -59,6 +59,7 @@ public class ActionMenu : MonoBehaviour {
 	public int killCounter = 0;
 	private bool canTakeAction = true;
 	public int activeWeapon;
+	private bool isPromptingExit = false;
 
 	// Use this for initialization
 	void Start ()
@@ -96,27 +97,51 @@ public class ActionMenu : MonoBehaviour {
 		if(!canTakeAction) return;
 		isAiming = Input.mousePosition.y < Screen.height * 0.75f;
 		
-		if(Input.GetButtonDown("Action") && isAiming)
+		if(Input.GetButtonDown("Action"))
 		{
-			if(weapons[activeWeapon].ammoCurrent <= 0)
+			if(isPromptingExit)
 			{
-				log.Push(string.Format(Text.outOfAmmo, weapons[activeWeapon].type), Log.MessageType.feedback);
-				audio.PlayOneShot(weapons[activeWeapon].sfxEmpty);
+				isPromptingExit = false;
+				GameObject.Find("Exit Text").guiText.enabled = false;
 			}
-			else if(aimVictim == null)
+			else if(isAiming)
 			{
-				log.Push(Text.aimingAtNone, Log.MessageType.feedback);
+				if(weapons[activeWeapon].ammoCurrent <= 0)
+				{
+					log.Push(string.Format(Text.outOfAmmo, weapons[activeWeapon].type), Log.MessageType.feedback);
+					audio.PlayOneShot(weapons[activeWeapon].sfxEmpty);
+				}
+				else if(aimVictim == null)
+				{
+					log.Push(Text.aimingAtNone, Log.MessageType.feedback);
+				}
+				else
+				{
+					audio.PlayOneShot(weapons[activeWeapon].sfxShoot);
+					int dmg = weapons[activeWeapon].Shoot(FindAccuracy());
+					aimVictim.SendMessage("TakeDamage", dmg, SendMessageOptions.DontRequireReceiver);
+					if(dmg <= 0)
+						log.Push(Text.shotMissed, Log.MessageType.shoot);
+				
+					EndTheTurn();
+				}
+			}
+		}
+		else if(Input.GetButtonDown("Exit"))
+		{
+			if(!isPromptingExit)
+			{
+				isPromptingExit = true;
+				GameObject.Find("Exit Text").guiText.enabled = true;
 			}
 			else
 			{
-				audio.PlayOneShot(weapons[activeWeapon].sfxShoot);
-				int dmg = weapons[activeWeapon].Shoot(FindAccuracy());
-				aimVictim.SendMessage("TakeDamage", dmg, SendMessageOptions.DontRequireReceiver);
-				if(dmg <= 0)
-					log.Push(Text.shotMissed, Log.MessageType.shoot);
-				
-				EndTheTurn();
+				Application.Quit();
 			}
+		}
+		else if(Input.GetButtonDown("Fullscreen"))
+		{
+			Screen.fullScreen = !Screen.fullScreen;
 		}
 	}
 
@@ -205,11 +230,16 @@ public class ActionMenu : MonoBehaviour {
 		canTakeAction = false;
 		
 		//Prepare explanation text.
-		GUIText t = GameObject.Find("Intro Text").guiText;
-		t.text = Text.introExplanation;
-		t.material.color = new Color(t.material.color.r, t.material.color.g, t.material.color.b, 1);
-		t.enabled = true;
-		
+		GUIText t1 = GameObject.Find("Intro Explanation Text").guiText;
+		t1.text = Text.introExplanation;
+		t1.material.color = new Color(t1.material.color.r, t1.material.color.g, t1.material.color.b, 1);
+		t1.enabled = true;
+
+		GUIText t2 = GameObject.Find("Intro Title Text").guiText;
+		t2.text = Text.introTitle;
+		t2.material.color = new Color(t2.material.color.r, t2.material.color.g, t2.material.color.b, 1);
+		t2.enabled = true;
+
 		ScreenOverlay overlay = gameObject.GetComponent<ScreenOverlay>();
 		overlay.intensity = -1;
 
@@ -229,16 +259,18 @@ public class ActionMenu : MonoBehaviour {
 		
 		//Fade out text and fade in game
 		float fadeSpeed = 1 / introFadeTime;
-		while(t.material.color.a > 0 || overlay.intensity < 0 || guiColor.a < 1)
+		while(t1.material.color.a > 0 || overlay.intensity < 0 || guiColor.a < 1)
 		{
-			t.material.color = new Color(t.material.color.r, t.material.color.g, t.material.color.b, Mathf.Max(0, t.material.color.a - fadeSpeed * Time.deltaTime));
+			t1.material.color = new Color(t1.material.color.r, t1.material.color.g, t1.material.color.b, Mathf.Max(0, t1.material.color.a - fadeSpeed * Time.deltaTime));
+			t2.material.color = new Color(t2.material.color.r, t2.material.color.g, t2.material.color.b, Mathf.Max(0, t2.material.color.a - fadeSpeed * Time.deltaTime));
 			overlay.intensity = Mathf.Min(0, overlay.intensity + fadeSpeed * Time.deltaTime);
 			guiColor = new Color(guiColor.r, guiColor.g, guiColor.b, Mathf.Min(1, guiColor.a + fadeSpeed * Time.deltaTime));
 			yield return new WaitForEndOfFrame();
 		}
 		
 		//Done. Let's play!
-		t.enabled = false;
+		t1.enabled = false;
+		t2.enabled = false;
 		canTakeAction = true;
 		
 		SendMessageToAI("GameStarted");

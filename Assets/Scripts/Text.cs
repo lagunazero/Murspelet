@@ -4,6 +4,7 @@ using System.Collections;
 public static class Text {
 
 	//Special
+	public static string introTitle = "No-one has the intention";
 	public static string introExplanation =
 		"START OF BRIEFING\n" +
 		"Use your mouse to aim.\n" +
