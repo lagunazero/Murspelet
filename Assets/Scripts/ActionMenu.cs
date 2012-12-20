@@ -94,16 +94,24 @@ public class ActionMenu : MonoBehaviour {
 	
 	void Update()
 	{
+		//Fullscreen toggle
+		if(Input.GetButtonDown("Fullscreen"))
+		{
+			Screen.fullScreen = !Screen.fullScreen;
+		}
+
 		if(!canTakeAction) return;
 		isAiming = Input.mousePosition.y < Screen.height * 0.75f;
 		
 		if(Input.GetButtonDown("Action"))
 		{
+			//Exit game?
 			if(isPromptingExit)
 			{
 				isPromptingExit = false;
 				GameObject.Find("Exit Text").guiText.enabled = false;
 			}
+			//Take actions
 			else if(isAiming)
 			{
 				if(weapons[activeWeapon].ammoCurrent <= 0)
@@ -127,7 +135,8 @@ public class ActionMenu : MonoBehaviour {
 				}
 			}
 		}
-		else if(Input.GetButtonDown("Exit"))
+		//Exit game? Not applicable to the web player
+		else if(!Application.isWebPlayer && Input.GetButtonDown("Exit"))
 		{
 			if(!isPromptingExit)
 			{
@@ -138,10 +147,6 @@ public class ActionMenu : MonoBehaviour {
 			{
 				Application.Quit();
 			}
-		}
-		else if(Input.GetButtonDown("Fullscreen"))
-		{
-			Screen.fullScreen = !Screen.fullScreen;
 		}
 	}
 

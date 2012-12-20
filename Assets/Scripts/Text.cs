@@ -10,6 +10,7 @@ public static class Text {
 		"Use your mouse to aim.\n" +
 		"Left mouse button shoots or performs an action.\n" +
 		"Press left mouse button to begin.\n" +
+		"Toggle fullscreen with F.\n" +
 		"END OF BRIEFING";
 	public static string outroCount = "You shot and killed {0} unarmed civilians.\n\n\n\n\n\n\nThank you for playing.";
 	public static string outroCountSingle = "You shot and killed {0} unarmed civilian.\n\n\n\n\n\n\nThank you for playing.";
