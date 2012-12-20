@@ -205,7 +205,7 @@ public class ActionMenu : MonoBehaviour {
 		canTakeAction = false;
 		
 		//Prepare explanation text.
-		GUIText t = GameObject.Find("Special text").guiText;
+		GUIText t = GameObject.Find("Intro Text").guiText;
 		t.text = Text.introExplanation;
 		t.material.color = new Color(t.material.color.r, t.material.color.g, t.material.color.b, 1);
 		t.enabled = true;
@@ -249,7 +249,7 @@ public class ActionMenu : MonoBehaviour {
 		isEnding = true;
 		canTakeAction = false;
 		log.Push(Text.outroStart, Log.MessageType.special);
-		//yield return new WaitForSeconds(endBeforeStartTime);
+		yield return new WaitForSeconds(endBeforeStartTime);
 		
 		//Turn towards the gun.
 		animation.clip = endAnimation;
@@ -257,14 +257,26 @@ public class ActionMenu : MonoBehaviour {
 		yield return new WaitForSeconds(endAnimation.length + endBeforeTextTime);
 
 		//Show the ending text
-		GUIText t = GameObject.Find("Special text").guiText;
-		t.text = string.Format(Text.outroEnd, killCounter);
-		t.material.color = new Color(1,1,1,0);
-		t.enabled = true;
+		GUIText t1 = GameObject.Find("Outro Count Text").guiText;
+		if(killCounter == 0)
+			t1.text = Text.outroCountNone;
+		else if(killCounter == 1)
+			t1.text = string.Format(Text.outroCountSingle, killCounter);
+		else
+			t1.text = string.Format(Text.outroCount, killCounter);
+		t1.material.color = new Color(1,1,1,0);
+		t1.enabled = true;
+		
+		GUIText t2 = GameObject.Find("Outro Credits Text").guiText;
+		t2.text = Text.outroCredits;
+		t2.material.color = new Color(0.7f,0.7f,0.7f,0);
+		t2.enabled = true;
+		
 		float fadeSpeed = 1 / endTextFadeTime;
-		while(t.material.color.a < 1)
+		while(t1.material.color.a < 1)
 		{
-			t.material.color = new Color(1,1,1,t.material.color.a + fadeSpeed * Time.deltaTime);
+			t1.material.color = new Color(1,1,1,t1.material.color.a + fadeSpeed * Time.deltaTime);
+			t2.material.color = new Color(0.7f,0.7f,0.7f,t2.material.color.a + fadeSpeed * Time.deltaTime);
 			yield return new WaitForEndOfFrame();
 		}
 		//Now it's all over...

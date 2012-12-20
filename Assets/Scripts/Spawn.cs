@@ -17,7 +17,7 @@ public class Spawn : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
-		spawnCounter = spawnFreq + Random.Range(-spawnFreqRandom, spawnFreqRandom);
+		spawnCounter = 0;// spawnFreq + Random.Range(-spawnFreqRandom, spawnFreqRandom);
 	}
 	
 	// Update is called once per frame

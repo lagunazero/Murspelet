@@ -3,9 +3,11 @@ using System.Collections;
 
 public class Movement : MonoBehaviour {
 
-	public float distanceAverage;
-	public float distanceRandomDistribution;
-	public float directionRandomDistribution;
+	public float distanceAverage = 40;
+	public float distanceRandomDistribution = 15;
+	public float directionRandomDistribution = 0.12f;
+	public int yOffsetFrameFrequency = 6;
+	public float yOffsetRestriction = 6;
 	public Health health;
 	public VictimInfo info;
 	public Vector3 goalPoint;
@@ -56,6 +58,10 @@ public class Movement : MonoBehaviour {
 		step.z += Random.Range(- directionRandomDistribution,  directionRandomDistribution);
 		//Divide by number of frames, since we want a distance/turn.
 		step *= vel / actionMenu.framesPerTurn;
+
+		Vector3 s = step;
+		int yCounter = 0;
+		
 		while(isMoving)
 		{
 			if(Vector3.Distance(transform.position, goalPoint) < goalDistanceRequirement)
@@ -68,7 +74,13 @@ public class Movement : MonoBehaviour {
 			}
 			else
 			{
-				transform.Translate(step, Space.World);
+				if(--yCounter <= 0)
+				{
+					yCounter = yOffsetFrameFrequency;
+					s = step;
+					s.y += Random.Range(3 - transform.position.y, 3.5f - transform.position.y) / yOffsetRestriction;
+				}
+				transform.Translate(s, Space.World);
 				yield return new WaitForEndOfFrame();
 			}
 		}
