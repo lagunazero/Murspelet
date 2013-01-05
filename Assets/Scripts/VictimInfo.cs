@@ -11,12 +11,13 @@ public class VictimInfo : MonoBehaviour {
 	public float bravery;
 	[HideInInspector]
 	public bool isFleeing = false;
-	public float sizeMultiplierMin, sizeMultiplierMax;
+	public float sizeMultiplierMin = 0.8f, sizeMultiplierMax = 1.2f; //around 1
+	public float braveryMin = 0.4f, braveryMax = 1f; //between 0-1
 	
 	public void Start()
 	{
 		gender = (Gender)Random.Range(0, 2);
-		bravery = Random.Range(0.4f, 1f);
+		bravery = Random.Range(braveryMin, braveryMax);
 		transform.localScale *= Random.Range(sizeMultiplierMin, sizeMultiplierMax);
 	}
 }

@@ -12,14 +12,15 @@ public static class Text {
 		"Press left mouse button to begin.\n" +
 		"Toggle fullscreen with F.\n" +
 		"END OF BRIEFING";
-	public static string outroCount = "You shot and killed {0} unarmed civilians.\n\n\n\n\n\n\nThank you for playing.";
-	public static string outroCountSingle = "You shot and killed {0} unarmed civilian.\n\n\n\n\n\n\nThank you for playing.";
-	public static string outroCountNone = "You took no part in the killing of unarmed civilians.\n\n\n\n\n\n\nThank you.";
-	public static string outroCredits = "A game about considering your actions, by Ulf Hartelius\n" +
+	public static string outroCount = "You shot and killed {0} unarmed civilians.\n\n\n\n\n\n\n\n\nThank you for playing.";
+	public static string outroCountSingle = "You shot and killed {0} unarmed civilian.\n\n\n\n\n\n\n\n\nThank you for playing.";
+	public static string outroCountNone = "You took no part in the killing of unarmed civilians.\n\n\n\n\n\n\n\n\nThank you.";
+	public static string outroCredits = "A game by Ulf Hartelius\n" +
 									"Sound by Alexander Zurowetz\n" +
 									"Graphics from Unity Asset Store:\n" +
-									"  Gun by Zodiac Alliance Digital Entertainment,\n" +
-									"  Textures by Allegorithmic and Ninety Nine Works";
+									"  Gun by Zodiac Alliance Digital Entertainment\n" +
+									"  Textures by Allegorithmic and Ninety Nine Works\n" +
+									"  Barbed wire by Unity Technologies";
 	
 	//Events
 	public static string introGameStart = "The watch begins...";
@@ -61,10 +62,10 @@ public static class Text {
 		"Whoa, you missed one!",
 		"Be careful, you missed another one.",
 		"You forgot to reload or something?",
-		"Are you even trying?",
+		"Are you even trying? Whose side are you on?",
 		"You want me to tell the captain on you?!",
 		"We can't lose 'em like this, hold your damn ground!",
-		"You better shape up ASAP!",
+		"You've let seven of them through now. That's seven too many!",
 		"...please try harder, I don't want to be alone here again...",
 		"This is your last warning. We can't have traitors around..."
 	};
@@ -75,7 +76,7 @@ public static class Text {
 	public static string radioContact01 = "Welcome to the wall, soldier!";
 	public static string radioContact02 = "Better get acquainted with it.";
 	public static string radioContact03 = "Just aim to kill. They'd rather be dead too!";
-	public static string radioContact04 = "Don't worry too much, you're not alone up here.";
+	public static string radioContact04 = "You see anyone coming yet?";
 	public static string radioContact05 = "It's a good thing we're up here. Good sight, little risk.";
 	
 	public static string radioContact06 = "You wouldn't happen to know how long it's been, do you?";
@@ -109,10 +110,10 @@ public static class Text {
 	public static string radioContact28 = "Can I ask you a question? You don't have to answer.";
 	public static string radioContact29 = "Are you aiming to kill or scare?";
 	public static string radioContact30 = "I mostly just try to scare 'em.";
-	public static string radioContact31 = "Nowadays...";
+	public static string radioContact31 = "........";
 	public static string radioContact32 = "Though it's not easy. The aim's hardly perfect.";
 	public static string radioContact33 = "I won't hold either against you. We're just following orders.";
-	public static string radioContact34 = "Even when they're with women or children, like the traitors they are...";
+	public static string radioContact34 = "All of them are traitors, mind you.";
 
 	public static string radioContact35 = "Speaking of aiming, I should warn you about something.";
 	public static string radioContact36 = "No, never mind. I shouldn't.";

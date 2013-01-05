@@ -18,7 +18,7 @@ public class Weapon : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
-		ammoCurrent = ammoMax;
+		ammoCurrent = 0;
 	}
 	
 	public int Shoot(int reqAcc)

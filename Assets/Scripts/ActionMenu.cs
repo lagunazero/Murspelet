@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class ActionMenu : MonoBehaviour {
 	
 	public int initTurns = 0;
-	public int tranquilitySlipByAmount = 8;
+	//public int tranquilitySlipByAmount = 8;
 	public int endSlipByAmount = 10;
 	public int framesPerTurn = 60;
 
@@ -15,7 +15,6 @@ public class ActionMenu : MonoBehaviour {
 	public List<Weapon> weapons;
 	public Log log;
 	public List<Searchlight> searchlights;
-	public DialogueSystem dialogueSystem;
 	public GradualNight terrainScript;
 	public Soundscape soundscape;
 	
@@ -27,9 +26,6 @@ public class ActionMenu : MonoBehaviour {
 	public float endBeforeStartTime;
 	public float endBeforeTextTime;
 	public float endTextFadeTime = 1;
-
-	//Text
-	public AudioClip sfxChatNoise;
 
 	//UI graphics
 	public float aimBorder = 400;
@@ -191,15 +187,16 @@ public class ActionMenu : MonoBehaviour {
 					//Make a remark on the radio.
 					if(Text.slippedByRemarks.Length > slippedByCounter && Text.slippedByRemarks[slippedByCounter] != "")
 					{
-						audio.PlayOneShot(sfxChatNoise);
 						log.PushRadio(Text.slippedByRemarks[slippedByCounter]);
 					}
 					
 					//Have we passed the point for final tranquility?
-					if(slippedByCounter > tranquilitySlipByAmount)
+					/*
+					if(slippedByCounter >= tranquilitySlipByAmount)
 					{
 						SendMessageToAI("Tranquility");
 					}
+					*/
 				}
 			}
 		}
@@ -285,6 +282,7 @@ public class ActionMenu : MonoBehaviour {
 	{
 		isEnding = true;
 		canTakeAction = false;
+		SendMessageToAI("Tranquility");
 		log.Push(Text.outroStart, Log.MessageType.special);
 		yield return new WaitForSeconds(endBeforeStartTime);
 		
@@ -306,7 +304,7 @@ public class ActionMenu : MonoBehaviour {
 		
 		GUIText t2 = GameObject.Find("Outro Credits Text").guiText;
 		t2.text = Text.outroCredits;
-		t2.material.color = new Color(0.7f,0.7f,0.7f,0);
+		t2.material.color = new Color(0.6f,0.6f,0.6f,0);
 		t2.enabled = true;
 		
 		float fadeSpeed = 1 / endTextFadeTime;
@@ -348,6 +346,7 @@ public class ActionMenu : MonoBehaviour {
 		//AIM
 		if(isAiming && canTakeAction)
 		{
+			Screen.showCursor = false;
 			OnGUI_Mouse(mouseAimIcon);
 			if(aimVictim != null)
 			{
@@ -359,7 +358,8 @@ public class ActionMenu : MonoBehaviour {
 		}
 		else
 		{
-			OnGUI_Mouse(mouseNormalIcon);
+			Screen.showCursor = true;
+			//OnGUI_Mouse(mouseNormalIcon);
 		}
 		
 		//HOLD FIRE
@@ -395,18 +395,20 @@ public class ActionMenu : MonoBehaviour {
 				Text.chatEntries[Random.Range(0, Text.chatEntries.Length)] + ' ' +
 				Text.RandomChatNoise(),
 				Log.MessageType.radio);
-			*/
 			if(slippedByCounter < tranquilitySlipByAmount)
+			*/
 			{
 				if(soundscape.sourceRocking.isPlaying)
 					soundscape.StopRocking();
 				else
 					soundscape.PlayRocking();
 			}
+			/*
 			else
 			{
 				log.Push(Text.radioNoSignal, Log.MessageType.feedback);
 			}
+			*/
 			EndTheTurn();
 		}
 		

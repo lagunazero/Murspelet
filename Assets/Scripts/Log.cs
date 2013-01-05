@@ -16,6 +16,9 @@ public class Log : MonoBehaviour {
 	private List<LogMessage> log = new List<LogMessage>();
 	[HideInInspector]
 	public int turnCounter = 0;
+	public ActionMenu actionMenu;
+	public AudioClip sfxChatNoise;
+	public float sfxChatNoiseVolume = 1;
 	
 	public GUIText[] guiTexts;
 	public Color[] messageTypeColors;
@@ -47,6 +50,7 @@ public class Log : MonoBehaviour {
 	
 	public void PushRadio(string msg)
 	{
+		actionMenu.audio.PlayOneShot(sfxChatNoise, sfxChatNoiseVolume);
 		Push(Text.RandomChatNoise() + ' ' + msg + ' ' + Text.RandomChatNoise(), MessageType.radio);
 	}
 	

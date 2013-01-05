@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Movement : MonoBehaviour {
 
-	public float distanceAverage = 40;
-	public float distanceRandomDistribution = 15;
+	public float distanceAverage = 30;
+	public float distanceRandomDistribution = 8;
 	public float directionRandomDistribution = 0.12f;
 	public int yOffsetFrameFrequency = 6;
 	public float yOffsetRestriction = 6;

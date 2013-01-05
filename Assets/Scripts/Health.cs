@@ -41,7 +41,6 @@ public class Health : MonoBehaviour {
 			if(currentHealth <= 0)
 			{
 				log.Push(Text.hitKilled, Log.MessageType.shoot);
-				audio.Play();
 				actionMenu.killCounter++;
 				actionMenu.GetComponent<RadioFeedback>().KillFeedback();
 				StartCoroutine(Die());
@@ -57,7 +56,8 @@ public class Health : MonoBehaviour {
 		}
 		
 		//If the victim is still alive, are we brave enough to continue?
-		if(isAlive && info.bravery < Random.Range(0f,1f))
+		if(isAlive && info.bravery < Random.Range(
+			(damage <= 0 ? 0f : 0.4f), 1f)) //Tougher to resist if they got damaged
 		{
 			GetComponent<Movement>().Flee();
 		}
